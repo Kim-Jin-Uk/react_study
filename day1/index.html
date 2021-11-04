@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        //tag를 만들어주는 메소드
+        // const e = React.createElement;
+        class LikeButton extends React.Component{
+            //기본으로 생성해두기
+            constructor(props) {
+                super(props);
+                this.state = {
+                    liked:false,
+                };
+            }
+            //tag 만들기
+            render(){
+                // return e('button',
+                //     {onClick: () =>
+                //         {this.setState({
+                //             liked: true
+                //         })}
+                //         , type: 'submit'}
+                //     ,
+                //     this.state.liked === true?
+                //         "Liked": "Like");//<button>Like</>button>
+
+                return <button type="submit"
+                               onClick={() => {
+                                   this.state.liked === false ? this.setState({liked:true}) : this.setState({liked:false})
+                               }}
+                >{this.state.liked === true? "싫어요":"좋아요"}</button>
+            }
+        }
+    </script>
+    <script type="text/babel">
+        //랜더링
+        ReactDOM.render(
+            <div>
+                <LikeButton />
+                <LikeButton />
+                <LikeButton />
+                <LikeButton />
+                <LikeButton />
+                <LikeButton />
+                <LikeButton />
+                <LikeButton />
+                <LikeButton />
+            </div>, document.querySelector('#root'));
+    </script>
+</body>
+</html>

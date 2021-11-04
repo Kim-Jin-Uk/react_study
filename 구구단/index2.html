@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const Gugudan = () =>{
+            const[first,setFirst] = React.useState(Math.ceil(Math.random()*9));
+            const[second,setSecond] = React.useState(Math.ceil(Math.random()*9));
+            const[value,setValue] = React.useState("");
+            const[result,setResult] = React.useState("");
+            const inputRef = React.useRef();
+            //
+            const onSubmitEdit = (e) =>{
+                e.preventDefault()
+                if (parseInt(value) === first*second){
+                    setResult("정답입니다: "+value)
+                    setFirst(Math.ceil(Math.random()*9))
+                    setSecond(Math.ceil(Math.random()*9))
+                }else {
+                    setResult("오답입니다")
+                }
+                setValue("")
+                inputRef.current.focus()
+            };
+
+            const onChangeInput = (e) =>{
+                setValue(e.target.value)
+            };
+            return(
+                <>
+                    <div>{first} X {second} = ?</div>
+                    <form onSubmit={onSubmitEdit}>
+                        <input
+                            ref={inputRef}
+                            onChange={onChangeInput}
+                            type="number"
+                            value={value}
+                        />
+                        <button>edit</button>
+                    </form>
+                    <div>{result}</div>
+                </>
+                );
+
+        }
+    </script>
+    <!--    -->
+    <script type="text/babel">
+        ReactDOM.render(
+            <Gugudan></Gugudan>,
+            document.querySelector("#root")
+        )
+    </script>
+</body>
+</html>
