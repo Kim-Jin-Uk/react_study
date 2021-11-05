@@ -1,70 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>구구단</title>
 </head>
 <body>
     <div id="root"></div>
-    <script type="text/babel">
-        class Gugudan extends React.Component{
-            constructor(props) {
-              super(props);
-              this.state = {
-                firstNum: Math.ceil(Math.random()*9),
-                secondNum: Math.ceil(Math.random()*9),
-                value: '',
-                result: ''
-              }
-            }
-
-            onSubmit=(e) => {
-                e.preventDefault()
-                if (parseInt(this.state.value) === this.state.firstNum*this.state.secondNum){
-                  this.setState({
-                    result: this.state.value.toString()+"정답입니다",
-                    firstNum: Math.ceil(Math.random()*9),
-                    secondNum: Math.ceil(Math.random()*9),
-                  })
-                }else {
-                  this.setState({result: "오답입니다"})
-                }
-                this.setState({value: ''})
-                this.input.focus()
-            }
-
-            onChange=(e) => {
-              this.setState({value: e.target.value})
-              this.input.focus()
-            }
-
-            input;
-
-            render(){
-              return(
-                  <>
-                    <div>{this.state.firstNum} 곱하기 {this.state.secondNum}는?</div>
-                    <form onSubmit={this.onSubmit}>
-                      <input ref={(c) => {this.input = c;}} type="number" value={this.state.value} onChange ={this.onChange}></input>
-                      <button>
-                        제출
-                      </button>
-                    </form>
-                    <div>{this.state.result}</div>
-                  </>
-              ) ;
-            }
-        }
-    </script>
-
-    <script type="text/babel">
-        ReactDOM.render(
-                <Gugudan />,
-                document.querySelector('#root')
-        );
-    </script>
+    <script src="./dist/app.js"></script>
 </body>
 </html>
