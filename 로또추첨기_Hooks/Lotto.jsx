@@ -1,4 +1,4 @@
-import React,{Component} from "react";
+import React,{useState, useRef, useEffect, useMemo, useCallback} from "react";
 import Ball from "./Ball";
 
 function getLottoNum(){
@@ -10,83 +10,59 @@ function getLottoNum(){
     return numArr
 }
 
-class Lotto extends Component{
-    state = {
-        lottoArr: getLottoNum(),
-        winBalls:[],
-        bonus:null,
-        redo: false
-    }
+const Lotto = () => {
+    const lottoNumbers = useMemo(() => getLottoNum(),[])
+    const [lottoArr,setLottoArr] = useState(lottoNumbers)
+    const [winBalls,setWinBalls] = useState([])
+    const [bonus,setBonus] = useState(null)
+    const [redo,setRedo] = useState(false)
 
-    timeout = []
+    const timeout = useRef([])
 
-    lottoShuffle = () => {
+    useEffect(() => {
+        lottoShuffle()
+        return () => {
+            timeout.current.forEach((t) => {
+                clearTimeout(t)
+            })
+        }
+    },[timeout.current])
+
+    const lottoShuffle = () => {
         console.log("lottoShuffle")
-        const {lottoArr} = this.state
         for (let i = 0; i < lottoArr.length - 1; i++) {
-            this.timeout.push(setTimeout(() => {
-                this.setState((prevState) => {
-                    return {
-                        winBalls: [...prevState.winBalls, lottoArr[i]],
-                    }
-                })
+            timeout.current.push(setTimeout(() => {
+                setWinBalls((prevWinBalls) => [...prevWinBalls, lottoArr[i]])
             },(i+1)*1000))
         }
-        this.timeout.push(setTimeout(() => {
-            this.setState({
-                bonus: lottoArr[6],
-                redo: true
-            })
+        timeout.current.push(setTimeout(() => {
+            setBonus(lottoArr[6])
+            setRedo(true)
         },7000))
     }
 
-    componentDidMount() {
-        console.log("componentDidMount")
-        this.lottoShuffle()
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.state.winBalls.length === 0){
-            console.log("componentDidUpdate")
-            this.lottoShuffle()
-        }
-    }
-
-    componentWillUnmount() {
-        console.log("componentWillUnmount")
-        this.timeout.forEach((t) => {
-            clearTimeout(t)
-        })
-    }
-
-    onClickRedo = () => {
+    const onClickRedo = useCallback(() => {
         console.log("onClickRedo")
-        this.setState({
-                lottoArr: getLottoNum(),
-                winBalls:[],
-                bonus:null,
-                redo: false
-            })
-        this.timeout = []
-    }
+        setLottoArr(getLottoNum())
+        setWinBalls([])
+        setBonus(null)
+        setRedo(false)
+        timeout.current = []
+    },[])
 
-    render() {
-        console.log("render")
-        const {winBalls, bonus, redo} = this.state
-        return(
-            <>
-                <div><h1>당첨숫자</h1></div>
-                <div id="result">
-                    {winBalls.map((v) => <Ball key={v} number={v} />)}
-                </div>
-                <div><h2>보너스</h2></div>
-                <div id="bonus">
-                    {bonus && <Ball number={bonus} />}
-                </div>
-                {redo && <button onClick={this.onClickRedo}>한번더!</button>}
-            </>
-        )
-    }
+    return(
+        <>
+            <div><h1>당첨숫자</h1></div>
+            <div id="result">
+                {winBalls.map((v) => <Ball key={v} number={v} />)}
+            </div>
+            <div><h2>보너스</h2></div>
+            <div id="bonus">
+                {bonus && <Ball number={bonus} />}
+            </div>
+            {redo && <button onClick={onClickRedo}>한번더!</button>}
+        </>
+    )
 }
 
 export default Lotto
