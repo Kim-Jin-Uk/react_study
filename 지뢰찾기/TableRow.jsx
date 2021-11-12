@@ -1,8 +1,8 @@
-import React,{useContext,useRef} from "react";
+import React, {memo, useContext, useRef} from "react";
 import TableItem from "./TableItem";
 import {MineContext} from "./MineFinder";
 
-const TableRow = ({rowIndex}) => {
+const TableRow = memo(({rowIndex}) => {
 
     const { tableData } = useContext(MineContext)
     return(
@@ -16,6 +16,6 @@ const TableRow = ({rowIndex}) => {
             )}
         </tr>
     )
-}
+})
 
 export default TableRow

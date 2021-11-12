@@ -1,4 +1,4 @@
-import React, {useCallback, useReducer, createContext, useMemo} from "react";
+import React, {useCallback, useReducer, createContext, useMemo, useEffect} from "react";
 import Table from "./Table";
 
 export const MineContext = createContext({
@@ -10,10 +10,10 @@ export const MineContext = createContext({
 const initialState = {
     tableData: [],
     timer:0,
-    result:0,
-    row:0,
-    cell:0,
-    mine:0,
+    result:'',
+    row:5,
+    cell:5,
+    mine:5,
     halted:true,
     openedCount: 0,
 }
@@ -27,6 +27,7 @@ export const CLICK_MINE = 'CLICK_MINE'
 export const FLAG_CELL = 'FLAG_CELL'
 export const QUESTION_CELL = 'QUESTION_CELL'
 export const NORMALIZE_CELL = 'NORMALIZE_CELL'
+export const INCREMENT_TIMER = 'INCREMENT_TIMER'
 
 export const CODE = {
     MINE: -7,
@@ -92,7 +93,10 @@ const reducer =(state,action) =>{
             return {
                 ...state,
                 tableData: PlantMIne(action.row, action.cell, action.mine),
-                halted: false
+                halted: false,
+                openedCount: 0,
+                timer: 0,
+                result: '',
             }
         }
         case OPEN_CELL:{
@@ -158,6 +162,11 @@ const reducer =(state,action) =>{
             checkAround(action.row, action.cell);
             let halted = false;
             let result = '';
+            if (state.row * state.cell - state.mine === state.openedCount + openedCount){
+                halted = true
+                result = `${state.timer}초 만에 승리하셨습니다.`
+            }
+
             return {
                 ...state,
                 tableData,
@@ -165,6 +174,12 @@ const reducer =(state,action) =>{
                 halted,
                 result,
             };
+        }
+        case INCREMENT_TIMER:{
+            return {
+                ...state,
+                timer: state.timer + 1
+            }
         }
         case CLICK_MINE:{
             const tableData = [...state.tableData]
@@ -230,11 +245,9 @@ const MineFinder = () => {
     const onChangeRow =useCallback((e) =>{
         dispatch({type:SET_ROW, row:e.target.value})
     },[])
-
     const onChangeCell =useCallback((e) =>{
         dispatch({type:SET_CELL, cell:e.target.value})
     },[])
-
     const onChangeMine =useCallback((e) =>{
         dispatch({type:SET_MINE, mine:e.target.value})
     },[])
@@ -243,7 +256,19 @@ const MineFinder = () => {
         dispatch({type:START_GAME, row, cell, mine})
     },[row, cell, mine])
 
-    return(
+    useEffect(() => {
+        let timer
+        if (halted === false){
+            timer = setInterval(() => {
+                dispatch({type:INCREMENT_TIMER})
+            },1000)
+        }
+        return () => {
+            clearInterval(timer)
+        }
+    },[halted])
+
+    return (
         <MineContext.Provider value = {value}>
             <div className="mine-header"><h2>행</h2>
                 <input type="number" value={row} onChange={onChangeRow}/>
@@ -263,7 +288,7 @@ const MineFinder = () => {
 
             <Table></Table>
 
-            <div>{result}</div>
+            <div><h1>{result}</h1></div>
         </MineContext.Provider>
     )
 }

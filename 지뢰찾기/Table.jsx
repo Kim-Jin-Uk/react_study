@@ -1,8 +1,8 @@
-import React,{useContext,useRef} from "react";
+import React, {memo, useContext, useRef} from "react";
 import TableRow from "./TableRow";
 import {MineContext} from "./MineFinder";
 
-const Table = () => {
+const Table = memo(() => {
     const { tableData } = useContext(MineContext)
     return(
         <table>
@@ -14,6 +14,6 @@ const Table = () => {
             )}
         </table>
     )
-}
+})
 
 export default Table

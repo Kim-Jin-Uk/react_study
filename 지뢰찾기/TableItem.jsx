@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useRef} from "react";
+import React, {memo, useCallback, useContext, useMemo, useRef} from "react";
 import {CLICK_MINE, CODE, FLAG_CELL, MineContext, NORMALIZE_CELL, OPEN_CELL, QUESTION_CELL} from "./MineFinder";
 
 const getItemStyle = (data) => {
@@ -58,7 +58,7 @@ const getItemText = (data) => {
     }
 }
 
-const TableItem = ({rowIndex,cellIndex}) => {
+const TableItem = memo(({rowIndex,cellIndex}) => {
     const {tableData,dispatch,halted} = useContext(MineContext)
 
     const onClickItem =useCallback(() =>{
@@ -104,13 +104,14 @@ const TableItem = ({rowIndex,cellIndex}) => {
         }
     },[tableData[rowIndex][cellIndex],halted])
 
-    return(
+    return useMemo(() =>
+        (
         <td
             style={getItemStyle(tableData[rowIndex][cellIndex])}
             onClick={onClickItem}
             onContextMenu={onContextMenuItem}
         >{getItemText(tableData[rowIndex][cellIndex])}</td>
-    )
-}
+    ),[tableData[rowIndex][cellIndex]])
+})
 
 export default TableItem
