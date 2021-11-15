@@ -34,7 +34,7 @@ const getItemText = (data) => {
             return ''
         }
         case CODE.MINE:{
-            return 'X'
+            return ''
         }
         case CODE.OPENED:{
             return ''
